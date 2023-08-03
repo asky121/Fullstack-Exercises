@@ -2,8 +2,6 @@ import { useState } from "react";
 
 function RandomNum (max) { //generates random number from 0 to the max value
   const rnum = Math.random()
-  console.log('Max is', max)
-  console.log(rnum)
   const newNumber = Math.floor(rnum * max)
   console.log('random number is', newNumber)
   return newNumber
@@ -24,13 +22,34 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))//array of number of votes
+  const [mostVotes, setMostVotes] = useState(0) //keeps track of most voted anecdote
+  
+  const copyOfVotes = {...votes} 
+
+  const handleVotes = () => { //adds 1 vote to the selected anecdote
+    copyOfVotes[selected]+=1
+    console.log(copyOfVotes)
+    setVotes(copyOfVotes)
+    updateMostVotes()
+  }
+
+  const updateMostVotes = () => { //checks the selected array and updates the mostVotes
+    if(copyOfVotes[selected] > copyOfVotes[mostVotes]){
+      setMostVotes(selected)
+    }
+  }
+  
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       {anecdotes[selected]}
-      <br/>
+      <p>has {copyOfVotes[selected]} votes</p>
+      <button onClick={handleVotes}>vote</button>
       <Button handleClick={() => setSelected(RandomNum(anecdotes.length - 1))} text='next anecdote'/>
+      <h2>Anecdote with most votes</h2>
+      {anecdotes[mostVotes]}
     </div>
   );
 }
