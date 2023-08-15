@@ -4,7 +4,7 @@ const Content = ({course}) => { //use map for array
     //parts.map(part => console.log(part.name))
     console.log('name', course.name)
     return (<>
-        {parts.map((part, i) => <p key= {i}>{part.name}</p>)}
+        {parts.map((part, i) => <p key= {i}>{part.name} {part.exercises}</p>)}
     </>)
 }
 
