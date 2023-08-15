@@ -5,15 +5,13 @@ import Total from "./Total"
 
 
 const Course = ({course}) => {
-    // console.log('parts', course.parts)
-    return (
-        // console.log('test', course.name)
+    return(
         <div>
             <Header name={course.name} />
             <Content course={course} />
             <Total course={course} />
         </div> 
-    )
+    )    
 }
 
 export default Course
