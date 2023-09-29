@@ -3,12 +3,9 @@ import Persons from "./Components/Persons";
 import Filter from "./Components/Filter";
 import PersonForm from "./Components/PersonForm";
 import axios from "axios";
+import PersonsService from "./Services/PersonsService"
 
 const App = () => {
-  // const [persons, setPersons] = useState([
-  //   {name: 'Arto Hellas',
-  //   number: '040-1234567'}
-  // ])
 
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
@@ -18,14 +15,10 @@ const App = () => {
 
   useEffect(() => { //fetches persons from json then adds it to persons useState
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => { 
-        console.log('promise fulfilled')
-        setPersons(response.data) 
-      })
+    PersonsService
+      .getAll()
+      .then(intialData => setPersons(intialData))
   }, [])
-  console.log('render', persons.length, 'persons')
 
   const addName = (event) => { //adds name to persons object when form is submitted
     event.preventDefault()
@@ -38,7 +31,12 @@ const App = () => {
     if (persons.some(person => person.name === newName)) {//checks if there's a duplicate name
       alert(`${newName} is already added to the phonebook`)
     } else ( //adds name to persons
-      setPersons(persons.concat(nameObject))
+      
+      PersonsService
+        .create(nameObject)
+        .then(response => {
+          setPersons(persons.concat(nameObject))
+        })
     )
     setNewName('')
     setNewNumber('')
@@ -69,6 +67,7 @@ const App = () => {
 
   return(
     <div>
+      {console.log(persons)}
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/> 
       <h3>Add a new</h3>
