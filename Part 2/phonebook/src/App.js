@@ -23,7 +23,7 @@ const App = () => {
 
   const addName = (event) => { //adds name to persons object when form is submitted
     event.preventDefault()
-    //console.log('button clicked', event.target)
+
     const nameObject = { //puts inputed name into an object to add to persons
       name: newName, 
       number: newNumber
@@ -32,12 +32,13 @@ const App = () => {
     if (persons.some(person => person.name === newName)) {//checks if there's a duplicate name
       alert(`${newName} is already added to the phonebook`)
     } else ( //adds name to persons
-      
+      newName !== '' ? 
       PersonsService
         .create(nameObject)
         .then(response => {
           setPersons(persons.concat(nameObject))
-        })
+        }) 
+      : alert('Please insert a name') //checks to make sure there is an inputted name
     )
     setNewName('')
     setNewNumber('')
@@ -65,13 +66,14 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
-  const handleDelete = (id) => { //deletes the inputted id from server and updates the persons useState
-    
-    console.log("need to delete this", id)
-    axios.delete(`http://localhost:3001/persons/${id}`)
-      .then(setPersons(persons.filter(person => person.id !== id)))
+  const handleDelete = (person) => { //deletes the inputted id from server and updates the persons useState
+    const id = person.id
+    if(window.confirm(`Delete ${person.name}?`)) {
+      PersonsService
+        .deletePerson(person.id)
+        .then(setPersons(persons.filter(person => person.id !== id)))
+    }
   }
-
 
   return(
     <div>
@@ -85,7 +87,7 @@ const App = () => {
       handleNumberChange={handleNumberChange}/>
       <h3>Numbers</h3>
       {/* <Persons persons={personsToShow}/> */}
-      {personsToShow.map((person) => <Person key={person.id} person={person} deletePerson={() => handleDelete(person.id)}/>)}
+      {personsToShow.map((person) => <Person key={person.id} person={person} deletePerson={() => handleDelete(person)}/>)}
     </div>
   )
   
