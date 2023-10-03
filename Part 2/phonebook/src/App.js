@@ -4,6 +4,7 @@ import Filter from "./Components/Filter";
 import PersonForm from "./Components/PersonForm";
 import axios from "axios";
 import PersonsService from "./Services/PersonsService"
+import Person from "./Components/Person";
 
 const App = () => {
 
@@ -64,6 +65,13 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
+  const handleDelete = (id) => { //deletes the inputted id from server and updates the persons useState
+    
+    console.log("need to delete this", id)
+    axios.delete(`http://localhost:3001/persons/${id}`)
+      .then(setPersons(persons.filter(person => person.id !== id)))
+  }
+
 
   return(
     <div>
@@ -76,7 +84,8 @@ const App = () => {
       handleNameChange={handleNameChange} 
       handleNumberChange={handleNumberChange}/>
       <h3>Numbers</h3>
-      <Persons persons={personsToShow}/>
+      {/* <Persons persons={personsToShow}/> */}
+      {personsToShow.map((person) => <Person key={person.id} person={person} deletePerson={() => handleDelete(person.id)}/>)}
     </div>
   )
   
