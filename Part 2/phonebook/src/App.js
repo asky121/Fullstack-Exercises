@@ -26,22 +26,34 @@ const App = () => {
 
     const nameObject = { //puts inputed name into an object to add to persons
       name: newName, 
-      number: newNumber
+      number: newNumber,
     }
 
-    if (persons.some(person => person.name === newName)) {//checks if there's a duplicate name
-      alert(`${newName} is already added to the phonebook`)
+    if (persons.some(person => person.name === newName)) {//checks if there's a duplicate name and asks to change number
+      if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        updateNumber(newName)
+      }
     } else ( //adds name to persons
       newName !== '' ? 
       PersonsService
         .create(nameObject)
-        .then(response => {
-          setPersons(persons.concat(nameObject))
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
         }) 
       : alert('Please insert a name') //checks to make sure there is an inputted name
     )
     setNewName('')
     setNewNumber('')
+  }
+
+  const updateNumber = (name) => { //finds the matching person in the server and changes their number
+    const person = persons.find(p => p.name === name)
+    const changedPerson = {...person, number: newNumber}
+    PersonsService
+      .update(person.id, changedPerson)
+      .then(personData => {
+        setPersons(persons.map(p => p.id !== person.id ? p : personData))
+      })
   }
 
   const personsToShow = showAll //shows filtered person object if showAll is false
