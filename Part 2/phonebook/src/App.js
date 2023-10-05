@@ -14,6 +14,7 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
   const [newFilter, setNewFilter] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
+  const [notifStyle, setNotifStyle] = useState('')
 
   useEffect(() => { //fetches persons from json then adds it to persons useState
     console.log('effect')
@@ -43,9 +44,11 @@ const App = () => {
         }) 
       : alert('Please insert a name') //checks to make sure there is an inputted name
     )
+    setNotifStyle('added')
     setErrorMessage(`Added ${newName}`) //notifies the user that a name has been successfully added
     setTimeout(() => {
       setErrorMessage(null)
+      setNotifStyle('')
     }, 5000)
     setNewName('')
     setNewNumber('')
@@ -89,6 +92,14 @@ const App = () => {
       PersonsService
         .deletePerson(person.id)
         .then(setPersons(persons.filter(person => person.id !== id)))
+        .catch(error => {
+          setNotifStyle("error")
+          setErrorMessage(`Information of ${person.name} has already been removed from server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+            setNotifStyle('')
+          }, 5000)
+        })
     }
   }
 
@@ -96,7 +107,7 @@ const App = () => {
     <div>
       {console.log(persons)}
       <h2>Phonebook</h2>
-      <Notification message={errorMessage}/>
+      <Notification message={errorMessage} style={notifStyle}/>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/> 
       <h3>Add a new</h3>
       <PersonForm addName={addName} 

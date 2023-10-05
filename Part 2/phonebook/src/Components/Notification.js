@@ -1,10 +1,10 @@
-const Notification = ({message}) => {
+const Notification = ({message, style}) => {
     if(message === null){
         return null
     }
-
+    console.log(style)
     return (
-        <div className='added'>
+        <div className={style}>
             {message}
         </div>
     )
