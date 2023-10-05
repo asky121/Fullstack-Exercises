@@ -1,4 +1,3 @@
-
 const Filter = ({newFilter, handleFilterChange}) => {
     return(
         <form>

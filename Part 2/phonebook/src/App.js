@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import Persons from "./Components/Persons";
 import Filter from "./Components/Filter";
 import PersonForm from "./Components/PersonForm";
-import axios from "axios";
 import PersonsService from "./Services/PersonsService"
 import Person from "./Components/Person";
+import Notification from "./Components/Notification";
+import './index.css'
 
 const App = () => {
 
@@ -13,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [newFilter, setNewFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => { //fetches persons from json then adds it to persons useState
     console.log('effect')
@@ -42,6 +43,10 @@ const App = () => {
         }) 
       : alert('Please insert a name') //checks to make sure there is an inputted name
     )
+    setErrorMessage(`Added ${newName}`) //notifies the user that a name has been successfully added
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
     setNewName('')
     setNewNumber('')
   }
@@ -51,8 +56,8 @@ const App = () => {
     const changedPerson = {...person, number: newNumber}
     PersonsService
       .update(person.id, changedPerson)
-      .then(personData => {
-        setPersons(persons.map(p => p.id !== person.id ? p : personData))
+      .then(returnedPerson => {
+        setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
       })
   }
 
@@ -91,6 +96,7 @@ const App = () => {
     <div>
       {console.log(persons)}
       <h2>Phonebook</h2>
+      <Notification message={errorMessage}/>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/> 
       <h3>Add a new</h3>
       <PersonForm addName={addName} 
@@ -98,7 +104,6 @@ const App = () => {
       handleNameChange={handleNameChange} 
       handleNumberChange={handleNumberChange}/>
       <h3>Numbers</h3>
-      {/* <Persons persons={personsToShow}/> */}
       {personsToShow.map((person) => <Person key={person.id} person={person} deletePerson={() => handleDelete(person)}/>)}
     </div>
   )
